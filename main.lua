@@ -14,7 +14,7 @@ function love.load()
 end
 
 function love.keypressed(key)
--- 	player.shoot(key)
+	player.shadow(key)
 end
 
 function love.update(dt)
@@ -30,8 +30,8 @@ end
 
 
 function love.draw()
- DRAW_PLAYER()
--- DRAW_SHADOW()
+ 	DRAW_PLAYER()
+	DRAW_SHADOW()
 end
 
 function love.quit()

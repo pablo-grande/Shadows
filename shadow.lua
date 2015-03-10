@@ -2,16 +2,24 @@ shadow = {}
 shadow.width = 50
 shadow.height = 50
 shadow.speed = 500
-shadow.color = blue
-shadow.x = 0
-shadow.y = 0
+-- shadow.color = blue
+-- shadow.x = 0
+-- shadow.y = 0
 
-function shadow:spawn(x,y)
-	table.insert(shadow,{x=x,y=y,width=shadow.width,height=shadow.height,color=shadow.color})
+function shadow:spawn(paramx,paramy,paramcolor)
+	table.insert(shadow,{
+			x=paramx,
+			y=paramy,
+			width=shadow.width,
+			height=shadow.height,
+			color=paramcolor
+		})
 end
 
 function shadow.draw()
-		rectangle(shadow)
+	for i,v in ipairs(shadow) do
+		rectangle(v)
+	end
 end
 
 

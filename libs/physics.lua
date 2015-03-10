@@ -6,6 +6,8 @@ function gravity(dt, e)
 	e.x = e.x + e.xvel * dt
 	--Friction
 	e.xvel = e.xvel * (1 - math.min(dt*e.friction, 1))
+
+	--jumping
 	if e.yvel ~= 0 then -- we're probably jumping
 				e.y = e.y - e.yvel * dt -- dt means we wont move at
 				-- different speeds if the game lags
