@@ -3,6 +3,7 @@ require "libs/physics"
 require "libs/sounds"
 
 require "world"
+require "controls"
 require "player"
 
 objects = {}
@@ -17,6 +18,7 @@ end
 
 function love.update(dt)
 	world:update(dt) --this puts the world into motion
+	keyboardControls()
 end
 
 
