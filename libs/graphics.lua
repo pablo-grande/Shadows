@@ -3,11 +3,9 @@ require "libs/colors"
 screenWidth = love.graphics.getWidth()
 screenHeight = love.graphics.getHeight()
 
-function LOAD_SCREEN()
+function graphics_set_up()
 	love.graphics.setBackgroundColor(white)
+	--love.window.setFullscreen( true )	
 end
 
-function rectangle(v)
-	love.graphics.setColor(v.color)
-	love.graphics.rectangle('fill',v.x,v.y,v.width,v.height)
-end
+
