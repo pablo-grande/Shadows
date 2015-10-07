@@ -24,7 +24,7 @@ function player.jump()
 end
 
 function player.jumping()
-	--TODO: not working when vx ~= 0
+	--TODO: not working when vx ~= 0 
 	vx, vy = player.body:getLinearVelocity()
 	return vy ~= 0
 end
@@ -35,5 +35,9 @@ end
 
 function player.moveRight()
 	player.body:applyForce(player.moveForce, 0)
+end
+
+function player.setColor(new_color)
+	color = new_color
 end
 
