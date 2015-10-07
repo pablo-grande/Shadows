@@ -5,7 +5,7 @@ local y = screenHeight-size/2
 local color = black 
 
 player = {}
-player.jumpForce = -100
+player.jumpForce = -400
 player.moveForce = 600
 player.body = love.physics.newBody(world, x,y, "dynamic")
 player.shape = love.physics.newRectangleShape( 0,0, size, size )
@@ -18,8 +18,15 @@ function player.draw()
 end
 
 function player.jump()
-	-- TODO: check if already jumping or flying (linear velocity on OY?)
-	player.body:applyLinearImpulse(0, player.jumpForce)
+	if not player.jumping() then
+		player.body:applyLinearImpulse(0, player.jumpForce)
+	end
+end
+
+function player.jumping()
+	--TODO: not working when vx ~= 0
+	vx, vy = player.body:getLinearVelocity()
+	return vy ~= 0
 end
 
 function player.moveLeft()
