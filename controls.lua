@@ -1,9 +1,12 @@
+
 function keyboardControls()
-	if love.keyboard.isDown("right") then
-		player.body:applyForce(200, 0)
-	elseif love.keyboard.isDown("left") then
-		player.body:applyForce(-200, 0)
-	elseif love.keyboard.isDown(" ") then
-		player.body:applyLinearImpulse(0, 400)
+	if love.keyboard.isDown("right") or love.keyboard.isDown("d") then
+		player.moveRight()
+	end	
+	if love.keyboard.isDown("left") or love.keyboard.isDown("a") then
+		player.moveLeft()
+	end	
+	if love.keyboard.isDown(" ")  or love.keyboard.isDown("w") or love.keyboard.isDown("up") then
+		player.jump()
 	end
 end
