@@ -1,7 +1,7 @@
-local Square = {}
-Square.__index = Square
+local Shape = {}
+Shape.__index = Square
 
-setmetatable(Square, {
+setmetatable(Shape, {
   __call = function (cls, ...)
   local self = setmetatable({}, cls)
       self:_init(...)
@@ -9,20 +9,20 @@ setmetatable(Square, {
    end,
 })
 
-function Square:_init(init)
+function Shape:_init(init)
   self.value = init
 end
 
-function Square:set_value(newval)
+function Shape:set_value(newval)
 	self.value = newval
 end
 
-function Square:get_value()
+function Shape:get_value()
 	return self.value
 end
 
-function Square.new(init)
-	local self = setmetatable({}, Square)
+function Shape.new(init)
+	local self = setmetatable({}, Shape)
 	self.x = init
 	return self
 end
