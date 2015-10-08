@@ -1,18 +1,21 @@
+-- x,y of center
+local function Shape(x, y, color)
+  	local self = {}
 
-local function Shape(init)
-  local self = {}
+  	local x = x
+	local y = y
+	local color = color
+	
+	function self.setColor(c)
+		color = c
+	end
 
-  local private_field = init
+	function self.getColor()
+		return color
+	end
 
-  function self.foo()
-    return private_field
-  end
-
-  function self.bar()
-    private_field = private_field + 1
-  end
-
-  -- return the instance
-  return self
+	return self
 end
+
+
 
