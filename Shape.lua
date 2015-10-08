@@ -1,28 +1,17 @@
-local Shape = {}
-Shape.__index = Square
+local function Shape(init)
+  local self = {}
 
-setmetatable(Shape, {
-  __call = function (cls, ...)
-  local self = setmetatable({}, cls)
-      self:_init(...)
-      return self
-   end,
-})
+  local private_field = init
 
-function Shape:_init(init)
-  self.value = init
+  function self.foo()
+    return private_field
+  end
+
+  function self.bar()
+    private_field = private_field + 1
+  end
+
+  -- return the instance
+  return self
 end
 
-function Shape:set_value(newval)
-	self.value = newval
-end
-
-function Shape:get_value()
-	return self.value
-end
-
-function Shape.new(init)
-	local self = setmetatable({}, Shape)
-	self.x = init
-	return self
-end
