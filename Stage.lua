@@ -1,4 +1,4 @@
-local function Stage(world, width, height)
+function Stage(world, width, height)
 	local self = {}
 	
 	width = width or love.graphics.getWidth()

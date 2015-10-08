@@ -1,5 +1,4 @@
--- x,y of center
-local function Shape(x, y, color)
+function Shape(x, y, color)
   	local self = {}
 
   	local x = x

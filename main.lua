@@ -5,8 +5,10 @@ require "libs/sounds"
 require "world"
 require "controls"
 require "player"
+require "Stage"
 
-objects = {}
+player = Player(world, screenWidth/2, screenHeight-50/2, 50, black)
+stage = Stage(world, screenWidth, screenHeight)
 
 function love.load()
 	graphics_set_up()
