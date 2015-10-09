@@ -5,6 +5,7 @@ require "libs/sounds"
 require "world"
 require "controls"
 require "Player"
+require "Shadow"
 require "Stage"
 
 player = Player(world, screenWidth/2, screenHeight-50/2)
@@ -26,11 +27,5 @@ end
 
 function love.draw()
  	player.draw()
-	showDetails()
 end
 
-function showDetails()
-	vx,vy = player.getLinearVelocity()
-	love.graphics.print("x: " .. player.getX() .. ", y: " .. player.getY(), 0, 0)
-	love.graphics.print("vx: " .. vx .. ", vy: " .. vy, 0, 10)
-end

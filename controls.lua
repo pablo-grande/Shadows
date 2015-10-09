@@ -5,6 +5,9 @@ function keyboardControls()
 	end	
 	if love.keyboard.isDown("left") or love.keyboard.isDown("a") then
 		player.moveLeft()
+	end
+	if love.keyboard.isDown("s") then
+		player.createShadow()
 	end	
 	if love.keyboard.isDown(" ")  or love.keyboard.isDown("w") or love.keyboard.isDown("up") then
 		player.jump()
