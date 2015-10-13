@@ -23,7 +23,7 @@ function Shadow(world, x, y, size, color)
 	local body = love.physics.newBody(world, x,y, "kinematic")
 	local shape = love.physics.newRectangleShape( 0,0, size, size )
 	local fixture = love.physics.newFixture(body, shape)
-	body:setUserData("Shadow" .. count)	-- ID
+	fixture:setUserData("Shadow" .. count)	-- ID
 
 	function self.draw()
 		love.graphics.setColor(self.getColor())
@@ -31,4 +31,16 @@ function Shadow(world, x, y, size, color)
 	end
 
 	return self
+end
+
+--------------------------------------------------
+-- 		STATIC METHODS			--
+--------------------------------------------------
+
+-- f: fixture
+-- returns true if fixture belongs to player
+function isShadow(f)
+	data = f:getUserData()
+	name = "Shadow"
+	return string.sub(data,1,string.len(name))==name
 end
