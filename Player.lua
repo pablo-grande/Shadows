@@ -20,14 +20,17 @@ function Player(world, x, y, size, color)
 	local self = Square(x, y, size, color)	-- extends Square
 	
 	count = count + 1
-	local jumpForce = -400
+	local jumpForce = -200
 	local moveForce = 600
+	local normalY = 0	-- total Y component of normal vector. Sum of each contact.
+	local normalX = 0	-- total X component of normal vector. Sum of each contact.
 	local body = love.physics.newBody(world, x,y, "dynamic")
 	local shape = love.physics.newRectangleShape( 0,0, size, size )
 	local fixture = love.physics.newFixture(body, shape)
 	fixture:setFriction(1)
-	body:setUserData("Player" .. count)	-- ID
+	fixture:setUserData("Player"..count)	-- ID
 	local shadows = {}
+	local contacts = {}
 	
 	function self.draw()
 		love.graphics.setColor(self.getColor())
@@ -38,15 +41,13 @@ function Player(world, x, y, size, color)
 	end
 
 	function self.jump()
-		if not self.jumping() then
-			body:applyLinearImpulse(0, jumpForce)
+		if not self.onAir() then
+			body:applyLinearImpulse(0, normalY*jumpForce)
 		end
 	end
 
-	function self.jumping()
-		--TODO: not working when vx ~= 0 
-		vx, vy = body:getLinearVelocity()
-		return vy ~= 0
+	function self.onAir()
+		return normalY <= 0
 	end
 
 	function self.moveLeft()
@@ -63,7 +64,7 @@ function Player(world, x, y, size, color)
 	end
 
 	function self.ID()
-		return body:getUserData()
+		return fixture:getUserData()
 	end
 
 	function self.getX()
@@ -73,7 +74,36 @@ function Player(world, x, y, size, color)
 	function self.getY()
 		return body:getY()	
 	end
+	
+	-- f: fixture of contact object
+	-- ny: normal Y applied to player
+	function self.addContact(f, ny)
+		contacts[f:getUserData()] = ny
+		normalY = normalY + ny
+	end
+	
+	--key: name(user data) of contact object
+	--returns true if contact removed
+	function self.removeContact(key)
+		ny = contacts[key]
+		if not ny then return false end	-- contact doesn't exist
+		normalY = normalY - ny
+		contacts[key] = nil		-- remove contact
+		return true
+	end
 
 	return self	
+end
+
+--------------------------------------------------
+-- 		STATIC METHODS			--
+--------------------------------------------------
+
+-- f: fixture
+-- returns true if fixture belongs to player
+function isPlayer(f)
+	data = f:getUserData()
+	name = "Player"
+	return string.sub(data,1,string.len(name))==name
 end
 
