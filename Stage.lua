@@ -8,21 +8,25 @@ function Stage(world, width, height)
 	ground.body = love.physics.newBody(world) 
 	ground.shape = love.physics.newEdgeShape( 0, height, width, height )
 	ground.fixture = love.physics.newFixture(ground.body, ground.shape);
+	ground.fixture:setUserData("Ground")
 
 	local ceiling = {}
 	ceiling.body = love.physics.newBody(world) 
 	ceiling.shape = love.physics.newEdgeShape( 0, 0, width, 0 )
 	ceiling.fixture = love.physics.newFixture(ceiling.body, ceiling.shape);
+	ceiling.fixture:setUserData("Ceiling")
 
 	local leftWall = {}
 	leftWall.body = love.physics.newBody(world) 
 	leftWall.shape = love.physics.newEdgeShape( 0, 0, 0, height )
 	leftWall.fixture = love.physics.newFixture(leftWall.body, leftWall.shape);
+	leftWall.fixture:setUserData("Left wall")
 
 	local rightWall = {}
 	rightWall.body = love.physics.newBody(world) 
 	rightWall.shape = love.physics.newEdgeShape( width, 0, width, height )
 	rightWall.fixture = love.physics.newFixture(rightWall.body, rightWall.shape);
+	rightWall.fixture:setUserData("Right wall")
 
 	return self
 end
