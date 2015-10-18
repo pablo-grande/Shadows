@@ -5,23 +5,38 @@ local meter = 50 --px
 love.physics.setMeter(meter)
 world = love.physics.newWorld(0, gravity*meter, true)
 
---world boundaries
-ground = {}
-ground.body = love.physics.newBody(world) 
-ground.shape = love.physics.newEdgeShape( 0, screenHeight, screenWidth, screenHeight )
-ground.fixture = love.physics.newFixture(ground.body, ground.shape);
+function beginContact(a, b, coll)
+    	x,y = coll:getNormal()
+	text = text.."\n"..a:getUserData().." colliding with "..b:getUserData().." with a vector normal of: "..x..", "..y
+	if isPlayer(a) then
+		player.addContact(b,y)
+		--text=text.."(a)"
+	elseif isPlayer(b) then
+		player.addContact(a,-y)
+		--text=text.."(b)"
+	end
+end
+ 
+function endContact(a, b, coll)
+    	persisting = 0
+	x,y = coll:getNormal()
+	text = text.."\n"..a:getUserData().." uncolliding with "..b:getUserData()
+	if isPlayer(a) then
+		player.removeContact(b:getUserData())
+	elseif isPlayer(b) then
+		player.removeContact(a:getUserData())
+	end
+end
+ 
+function preSolve(a, b, coll)
+    if persisting == 0 then    -- only say when they first start touching
+        --text = a:getUserData().." touching "..b:getUserData()
+    elseif persisting < 20 then    -- then just start counting
+        --text = text.." "..persisting
+    end
+    persisting = persisting + 1    -- keep track of how many updates they've been touching for
+end
+ 
+function postSolve(a, b, coll, normalimpulse1, tangentimpulse1, normalimpulse2, tangentimpulse2)
+end
 
-ceiling = {}
-ceiling.body = love.physics.newBody(world) 
-ceiling.shape = love.physics.newEdgeShape( 0, 0, screenWidth, 0 )
-ceiling.fixture = love.physics.newFixture(ceiling.body, ceiling.shape);
-
-leftWall = {}
-leftWall.body = love.physics.newBody(world) 
-leftWall.shape = love.physics.newEdgeShape( 0, 0, 0, screenHeight )
-leftWall.fixture = love.physics.newFixture(leftWall.body, leftWall.shape);
-
-rightWall = {}
-rightWall.body = love.physics.newBody(world) 
-rightWall.shape = love.physics.newEdgeShape( screenWidth, 0, screenWidth, screenHeight )
-rightWall.fixture = love.physics.newFixture(rightWall.body, rightWall.shape);
