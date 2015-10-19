@@ -19,10 +19,6 @@ end
 function love.update(dt)
 	world:update(dt) --this puts the world into motion
 	keyboardControls()
-
-	if string.len(text) > 768 then    -- cleanup when 'text' gets too long
-		text = ""
-	end
 end
 
 
