@@ -14,9 +14,6 @@ stage = Stage(world, screenWidth, screenHeight)
 function love.load()
 	graphics_set_up()
 	world:setCallbacks(beginContact, endContact, preSolve, postSolve)
-
-	text = ""   -- we'll use this to put info text on the screen later
-    	persisting = 0    -- we'll use this to store the state of repeated callback calls
 end
 
 function love.update(dt)
@@ -31,7 +28,5 @@ end
 
 function love.draw()
  	player.draw()
-
-	--love.graphics.print(text, 10, 10)
 end
 
