@@ -1,4 +1,4 @@
-require "Square" -- import base class
+require "Square" 			-- import base class
 
 --------------------------------------------------
 -- 		STATIC VARIABLES		--
@@ -14,7 +14,7 @@ local COLOR = black 			-- default color
 --------------------------------------------------
 --		CONSTRUCTOR			--
 --------------------------------------------------
--- world: world to which the player belongs
+-- world: world to wich the player belongs
 -- x,y	: (optional)initial player position in world
 -- size	: (optional)player size (square form)
 -- color: (optional)color used to paint the player on screen
@@ -48,7 +48,7 @@ function Player(world, x, y, size, color)
 	local shape = love.physics.newRectangleShape( 0,0, size, size )		-- love2d shape
 	local fixture = love.physics.newFixture(body, shape)			-- love2d fixture
 	fixture:setFriction(1)							-- set player's friction to 1 (max)
-	fixture:setUserData(CLASS_NAME..count)					-- set ID = CLASS_NAME + number
+	fixture:setUserData(CLASS_NAME..COUNT)					-- set ID = CLASS_NAME + number
 	local shadows = {}							-- player's shadows
 	local contacts = {}							-- current contacts.Array where key=object_ID;value=normalY
 	
@@ -71,7 +71,7 @@ function Player(world, x, y, size, color)
 		if not self.onAir() then						-- cannot jump if player is on air!
 			body:applyLinearImpulse(0, normalY*jumpForce)			
 			return true
-		elseif
+		else
 			return false
 		end
 	end
@@ -132,7 +132,7 @@ function Player(world, x, y, size, color)
 		return true
 	end
 
-	return self -- player instance	
+	return self 				-- player instance	
 end
 
 --------------------------------------------------
@@ -143,7 +143,7 @@ end
 -- f:	element's fixture
 -- returns => true if player
 function isPlayer(f)
-	data = f:getUserData()
-	return string.sub(data,1,string.len(CLASS_NAME))==CLASS_NAME
+	data = f:getUserData()							-- get ID
+	return string.sub(data,1,string.len(CLASS_NAME))==CLASS_NAME		-- split ID and check if first part is equal to class name
 end
 
