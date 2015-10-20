@@ -3,9 +3,7 @@ require "libs/colors"
 screenWidth = love.graphics.getWidth()
 screenHeight = love.graphics.getHeight()
 
-function graphics_set_up()
-	love.graphics.setBackgroundColor(white)
+function graphicsSetUp()
 	--love.window.setFullscreen( true )	
 end
-
 
