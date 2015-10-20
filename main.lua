@@ -9,10 +9,10 @@ require "Shadow"
 require "Stage"
 
 player = Player(world, screenWidth/2, screenHeight-50/2)
-stage = Stage(world, screenWidth, screenHeight)
+stage = Stage(world, white, screenWidth, screenHeight)
 
 function love.load()
-	graphics_set_up()
+	graphicsSetUp()
 	world:setCallbacks(beginContact, endContact, preSolve, postSolve)
 end
 
