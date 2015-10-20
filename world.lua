@@ -1,8 +1,12 @@
---------------------------------------------------
---		LOVE2D WORLD ENTITY		--
---------------------------------------------------
--- It contains all game entities		--
---------------------------------------------------
+----------------------------------------------------------------------------------------------------------
+--		LOVE2D WORLD ENTITY									--
+----------------------------------------------------------------------------------------------------------
+-- It contains all game entities. It is assumed that there are (at least) two global variables		--
+-- accessibles from here:										--
+--			-player -> declared in main							--
+--			-stage	-> declared in main							--
+--													--
+----------------------------------------------------------------------------------------------------------
 
 -- Global properties
 local GRAVITY = 9.81					-- Value of gravity
@@ -10,7 +14,7 @@ local METER = 50 					-- Meter size of our world in pixels
 
 -- Initialization
 love.physics.setMeter(METER)				-- init meter size
-world = love.physics.newWorld(0, GRAVITY*METER, true) 	-- create the world. The specific love2d class.
+world = love.physics.newWorld(0, GRAVITY*METER, true) 	-- create the world. A specific and global love2d class.
 
 
 ----------------------------------------------------------------------------------------------------------
