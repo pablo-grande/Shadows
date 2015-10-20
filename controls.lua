@@ -1,6 +1,12 @@
-------------------------------------------
--- 		GAME CONTROLS		--
-------------------------------------------
+----------------------------------------------------------------------------------------------------------
+-- 		GAME CONTROLS										--
+----------------------------------------------------------------------------------------------------------
+-- It is assumed that there are (at least) two global variables						--
+-- accessibles from here:										--
+--			-player -> declared in main							--
+--			-stage	-> declared in main							--
+--													--
+----------------------------------------------------------------------------------------------------------
 
 --Do some keyboard checks every game update
 function keyboardControls()
@@ -29,5 +35,7 @@ function love.keyreleased(key)
 		love.event.quit()		-- quit game
 	elseif key == "s" then
 		player.createShadow()
+	elseif key == "c" then
+		stage.changeColor()		-- change stage color
 	end
 end
