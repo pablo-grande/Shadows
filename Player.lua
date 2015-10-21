@@ -10,6 +10,7 @@ local SIZE = 50				-- default size
 local X = love.graphics.getWidth()/2	-- default X
 local Y = love.graphics.getHeight()/2	-- default Y
 local COLOR = black 			-- default color
+local MAX_LIFE = 255			-- max life points, min is 0  
 
 --------------------------------------------------
 --		CONSTRUCTOR			--
@@ -40,6 +41,7 @@ function Player(world, x, y, size, color)
 	--------------------------------------------------
 	-- 		   PROPERTIES			--
 	--------------------------------------------------
+	local life = MAX_LIFE							-- set full life
 	local jumpForce = -200							-- force amount used to make the player jump
 	local moveForce = 600							-- force amount used to move the player
 	local normalY = 0							-- total Y component of normal vector as sum of each contact
@@ -130,6 +132,29 @@ function Player(world, x, y, size, color)
 		normalY = normalY - ny
 		contacts[key] = nil		-- remove contact
 		return true
+	end
+	
+	-- returns player life points
+	function self.life()
+		return life
+	end
+
+	-- Increase player life points
+	-- p:	healing points(positive value)
+	function self.heal(p)
+		life = life + p			-- increase life points
+		if life > MAX_LIFE then		-- ensure not exceed the limit
+			life = MAX_LIFE
+		end	
+	end
+
+	-- Decrease player life points
+	-- p:	damage points(positive value)
+	function self.damage(p)
+		life = life - p			-- decrease life points
+		if life < 0 then		-- ensure not exceed the limit
+			life = 0
+		end	
 	end
 
 	return self 				-- player instance	

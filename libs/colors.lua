@@ -29,7 +29,7 @@ end
 -- c:	color to invert
 -- returns inverted color or nil if color not specified
 function invertColor(c)
-	if not c then return nil end		-- color not defined
+	if not c then return nil end	-- color not defined
 
 	R=255-c[1]			-- inverted R
 	G=255-c[2]			-- inverted G
