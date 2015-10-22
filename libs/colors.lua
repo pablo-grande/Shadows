@@ -37,3 +37,16 @@ function invertColor(c)
 
 	return {R,G,B}			-- return inverted color
 end
+
+-- Linear color interpolation between two RGB colors
+-- p:	% amount of first color
+-- c1:	first color
+-- c2:	second color
+-- return =>	interpolated color
+function linearColorInterpolation(p,c1,c2)
+	R = c1[1] * p + c2[1] * (1 - p)		-- calculate R component
+	G = c1[2] * p + c2[2] * (1 - p)		-- calculate G component
+	B = c1[3] * p + c2[3] * (1 - p)		-- calculate B component
+	return {R,G,B}
+end
+
