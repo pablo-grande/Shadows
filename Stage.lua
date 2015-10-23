@@ -78,9 +78,7 @@ function Stage(world, color, width, height)
 		end
 		color=c						-- assign new color
 		love.graphics.setBackgroundColor(color)		-- set background color
-		playercolor = linearColorInterpolation(player.lifepct(),invertColor(color),color)
-		player.setColor(playercolor)		-- set player color with stage negative color
-		--player.updateColor()				-- update player color according to life points
+		player.setColor(invertColor(color))		-- set player color with stage negative color
 	end
 	
 	--Set stage color

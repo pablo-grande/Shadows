@@ -10,8 +10,9 @@ local SIZE = 50				-- default size
 local X = love.graphics.getWidth()/2	-- default X
 local Y = love.graphics.getHeight()/2	-- default Y
 local COLOR = black 			-- default color
-local MAX_LIFE = 1000			-- max life points, min is 0
-local DETERIORATION = 0.01		-- life deterioration rate (lp/dt). (static constant or instance propertie?)
+local MAX_LIFE = 100			-- max life points(lp), min is 0
+local DETERIORATION = 1			-- life deterioration rate (lp/dt). (static constant or instance propertie?)
+local SHADOW_LIFE_CONSUMPTION = 2	-- life points required to generate a shadow	
 
 --------------------------------------------------
 --		CONSTRUCTOR			--
@@ -61,7 +62,7 @@ function Player(world, x, y, size, color)
 	
 	-- Draw the player and its shadows
 	function self.draw()
-		love.graphics.setColor(self.getColor())					-- set graphics with player color 
+		love.graphics.setColor(self.realColor())				-- set graphics with player color 
 		love.graphics.polygon("fill", body:getWorldPoints(shape:getPoints()))	-- paint player
 		for k,sh in pairs(shadows) do						-- iterate through player shadows
 			sh.draw()							-- draw shadow
@@ -103,8 +104,9 @@ function Player(world, x, y, size, color)
 
 	-- Create a shadow from player
 	function self.createShadow()
-		s = Shadow(body:getWorld(), body:getX(), body:getY(), self.getSize(), self.getColor())	-- create shadow
+		s = Shadow(body:getWorld(), body:getX(), body:getY(), self.getSize(), self.realColor())	-- create shadow
 		table.insert(shadows, s)								-- store shadow
+		self.damage(SHADOW_LIFE_CONSUMPTION)							-- consume life
 	end
 
 	-- returns => player ID
@@ -157,7 +159,6 @@ function Player(world, x, y, size, color)
 		if life > MAX_LIFE then		-- ensure not exceed the limit
 			life = MAX_LIFE
 		end
-		self.updateColor()
 	end
 
 	-- Decrease player life points
@@ -167,17 +168,17 @@ function Player(world, x, y, size, color)
 		if life < 0 then		-- ensure not exceed the limit
 			life = 0
 		end
-		self.updateColor()	
 	end
 
-	-- Update player color based on life points. 
+	-- Real player color based on life points and its basic color. 
 	-- The color approaches background with life decreasing
-	function self.updateColor()
-		c1 = self.getColor()				-- current player color
+	function self.realColor()
+		c1 = self.getColor()				-- player color
 		c2 = stage.getColor()				-- stage color
 		p = life/MAX_LIFE				-- life %
-		newcolor = linearColorInterpolation(p,c1,c2)	-- new player color
-		self.setColor(newcolor)				-- save color
+		realcolor = linearColorInterpolation(p,c1,c2)	-- new player color
+
+		return realcolor				
 	end
 
 	return self 						-- player instance	
