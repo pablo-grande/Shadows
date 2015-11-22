@@ -9,6 +9,16 @@ green = {0,255,0}
 blue = {0,0,255}
 yellow = {255,255,0}
 
+-------------------------------
+-- PREDEFINED ALPHA LEVELS   --
+-------------------------------
+transparent,invisible,alpha0 = 0,0,0							-- 0%
+nearlytransparent,almostclear,alpha25 = 63,63,63	-- 25%
+semitransparent,translucent,alpha50 = 127,127,127	-- 50%
+nearlyopaque,almostdark,alpha75 = 191,191,191			-- 75%
+opaque,matte,alpha1 = 255,255,255									-- 100%
+
+
 ----------------------------------
 --	 COLOR METHODS		--
 ----------------------------------
@@ -49,4 +59,3 @@ function linearColorInterpolation(p,c1,c2)
 	B = c1[3] * p + c2[3] * (1 - p)		-- calculate B component
 	return {R,G,B}
 end
-
