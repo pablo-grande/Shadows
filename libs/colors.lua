@@ -13,11 +13,18 @@ yellow = {255,255,0}
 -- PREDEFINED ALPHA LEVELS   --
 -------------------------------
 transparent,invisible,alpha0 = 0,0,0							-- 0%
+alpha10 = 24.6																		-- 10%
+alpha20 = 50.2																		-- 20%
 nearlytransparent,almostclear,alpha25 = 63,63,63	-- 25%
+alpha30 = 75.8																		-- 30%
+alpha40 = 101.4																		-- 40%
 semitransparent,translucent,alpha50 = 127,127,127	-- 50%
+alpha60 = 152.6																		-- 60%
+alpha70 = 178.2																		-- 70%
 nearlyopaque,almostdark,alpha75 = 191,191,191			-- 75%
-opaque,matte,alpha1 = 255,255,255									-- 100%
-
+alpha80 = 203.8																		-- 80%
+alpha90 = 229.4																		-- 90%
+opaque,visible,alpha1 = 255,255,255								-- 100%
 
 ----------------------------------
 --	 COLOR METHODS		--
@@ -58,4 +65,12 @@ function linearColorInterpolation(p,c1,c2)
 	G = c1[2] * p + c2[2] * (1 - p)		-- calculate G component
 	B = c1[3] * p + c2[3] * (1 - p)		-- calculate B component
 	return {R,G,B}
+end
+
+-- Construct RGBA color from simple RGB
+-- color:	RGB color
+-- alpha:	alpha level {0-255}
+-- return =>	RGBA color
+function RGBA (color,alpha)
+	return color[1],color[2],color[3],alpha
 end
