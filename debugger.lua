@@ -15,18 +15,19 @@ function debug ()
     local info = ""
 
     -- adding output info
-    info = info .. "Life:\t" .. math.floor(player.life())                                               -- player life
+    info = info .. "ID:\t"..player.ID()
+    info = info .. "\nLife:\t" .. math.floor(player.life())                                               -- player life
     info = info .. "\nPosition:\t("..math.floor(player.getX()) .. ","..math.floor(player.getY())..")"   -- player position
 
     -- draw debugging box
     local font = love.graphics.getFont()
     local width,lines = font:getWrap(info,WIDTH)
     local boxHeight = lines*font:getHeight()
-    love.graphics.setColor(0,0,0, alpha50)
+    love.graphics.setColor(RGBA(black,semitransparent))
     love.graphics.rectangle("fill",0,0,WIDTH,boxHeight)
 
     -- print info
-    love.graphics.setColor(0, 0, 255, 255)
+    love.graphics.setColor(white)
     love.graphics.printf(info,0,0, WIDTH)
 
   end
