@@ -26,17 +26,17 @@ function debug ()
     info = info .. "\nLife:\t" .. math.floor(player.life())                                               -- player life
     info = info .. "\nPosition:\t("..math.floor(player.getX()) .. ","..math.floor(player.getY())..")"     -- player position
     info = info .. "\nShadows:\t" .. player.shadowsCount()                                                -- player shadows count
-    local c = player.contacts()                                                                           -- player contacts...
+    local c = player.contacts()                                                                           -- player contacts list
     info = info .. "\nContacts:"
-    local nc = 0                                                                                          -- ... number of contacts
-    for id,normalY in pairs(c) do                                                                         -- ... elements contacted
-      nc = nc + 1
-      info = (nc > 1) and info .. "/" or info .. "\t"
-      info = info .. id
+    local nc = 0                                                                                          -- contacts count
+    for id,normalY in pairs(c) do                                                                         -- for each element contacted
+      nc = nc + 1                                               -- increase contacts count
+      info = (nc > 1) and info .. "/" or info .. "\t"           -- add a tab indent if first element, else add a "/" as separator 
+      info = info .. id                                         -- insert object id
     end
-    if nc == 0 then info = info .. "\t(any)" end
-    info = (prepend == "") and info or prepend .. "\n" .. info
-    info = (append == "") and info or info .. "\n" .. append
+    if nc == 0 then info = info .. "\t(any)" end                -- if any contact add the text "(any)"
+    info = (prepend == "") and info or prepend .. "\n" .. info  -- add prepend block: info = prepend+info
+    info = (append == "") and info or info .. "\n" .. append    -- add append block: info = info+append (actually prepend+info+append)
 
     -- draw debugging box
     local font = love.graphics.getFont()
@@ -55,21 +55,21 @@ function debug ()
   end
 end
 
--- Append a message to debugger
--- m: message
+-- Insert a message to the end of the append block so append=new_message+append
+-- m: message to insert
 function debugAppend(m)
-  if DEBUG then
-    local union = (append == "") and "" or "\n"
-    append = append .. union .. m
+  if DEBUG then                                     -- check if debugging activated
+    local union = (append == "") and "" or "\n"     -- define string connector as union=(append block empty)? "" : new_line
+    append = append .. union .. m                   -- insert message at the end
   end
 end
 
--- Prepend a message to debugger
--- m: message
+-- Insert a message to the begining of the prepend block so prepend=prepend+new_message
+-- m: message to insert
 function debugPrepend (m)
-  if DEBUG then
-    local union = (append == "") and "" or "\n"
-    prepend = m .. union .. prepend
+  if DEBUG then                                     -- check if debugging activated
+    local union = (append == "") and "" or "\n"     -- define string connector as union=(prepend block empty)? "" : new_line
+    prepend = m .. union .. prepend                 -- insert message at the begining
   end
 end
 
