@@ -4,6 +4,7 @@ require "libs/sounds"
 
 require "world"
 require "controls"
+require "debugger"
 require "Player"
 require "Shadow"
 require "Stage"
@@ -25,5 +26,5 @@ end
 
 function love.draw()
  	player.draw()
+	debug()
 end
-

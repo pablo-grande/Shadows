@@ -33,12 +33,12 @@ world = love.physics.newWorld(0, GRAVITY*METER, true) 	-- create the world. A sp
 -- b:		the second fixture object in the collision.
 -- coll: 	the contact object created.
 function beginContact(a, b, coll)
-    	x,y = coll:getNormal()			-- get collision vector normal with direction a->b
+  x,y = coll:getNormal()			                    -- get collision vector normal with direction a->b
 	-- check if player is in collision. Order determines vector normal direction, we only consider v.normal aplied to player
-	if isPlayer(a) then			-- player is the first object
-		player.addContact(b,y)		-- save collision with second object (same normal direction)
-	elseif isPlayer(b) then			-- player is the second object
-		player.addContact(a,-y)		-- save collision with first object (invert normal direction)
+	if isPlayer(a) then                             -- player is the first object
+		player.addContact(b,y)		                    -- save collision with second object (same normal direction)
+	elseif isPlayer(b) then                         -- player is the second object
+		player.addContact(a,-y)		                    -- save collision with first object (invert normal direction)
 	end
 end
 
@@ -49,10 +49,10 @@ end
 -- coll: 	the contact object created.
 function endContact(a, b, coll)
 	-- check if player is in finished collision
-	if isPlayer(a) then				-- player is the first object
-		player.removeContact(b:getUserData())	-- remove b from player contacts
-	elseif isPlayer(b) then				-- player is the second object
-		player.removeContact(a:getUserData())	-- remove a from player contacts
+	if isPlayer(a) then				                      -- player is the first object
+		player.removeContact(b:getUserData())	        -- remove b from player contacts
+	elseif isPlayer(b) then				                  -- player is the second object
+		player.removeContact(a:getUserData())	        -- remove a from player contacts
 	end
 end
 
@@ -71,4 +71,3 @@ end
 -- tangentimpulse1:	amount of impulse applied along the tangent of the first point of collision. It only applies to the postsolve callback
 function postSolve(a, b, coll, normalimpulse1, tangentimpulse1, normalimpulse2, tangentimpulse2)
 end
-
