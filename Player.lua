@@ -12,7 +12,7 @@ local Y = love.graphics.getHeight()/2	-- default Y
 local COLOR = black 			-- default color
 local MAX_LIFE = 100			-- max life points(lp), min is 0
 local DETERIORATION = 1			-- life deterioration rate (lp/dt). (static constant or instance propertie?)
-local SHADOW_LIFE_CONSUMPTION = 2	-- life points required to generate a shadow	
+local SHADOW_LIFE_CONSUMPTION = 2	-- life points required to generate a shadow
 
 --------------------------------------------------
 --		CONSTRUCTOR			--
@@ -21,25 +21,25 @@ local SHADOW_LIFE_CONSUMPTION = 2	-- life points required to generate a shadow
 -- x,y	: (optional)initial player position in world
 -- size	: (optional)player size (square form)
 -- color: (optional)color used to paint the player on screen
--- returns => Player instance OR nil if cannot create the player	
+-- returns => Player instance OR nil if cannot create the player
 function Player(world, x, y, size, color)
-	
+
 	if not world then return nil end					-- check required param
-	
+
 	--check optional params and fill with default vaules if necessary
 	x = x or X
 	y = y or Y
 	size = size or SIZE
 	color = color or COLOR
-	
+
 	--------------------------------------------------
 	-- 		   INHERITANCE			--
 	--------------------------------------------------
 	local self = Square(x, y, size, color)					-- extends Square
 	if not self then return nil end						-- failure(self should be something at this point!)
-	
+
 	COUNT = COUNT + 1							-- increment number of instaces generated
-	
+
 	--------------------------------------------------
 	-- 		   PROPERTIES			--
 	--------------------------------------------------
@@ -55,14 +55,14 @@ function Player(world, x, y, size, color)
 	fixture:setUserData(CLASS_NAME..COUNT)					-- set ID = CLASS_NAME + number
 	local shadows = {}							-- player's shadows
 	local contacts = {}							-- current contacts.Array where key=object_ID;value=normalY
-	
+
 	--------------------------------------------------
 	-- 		INSTANCE METHODS		--
 	--------------------------------------------------
-	
+
 	-- Draw the player and its shadows
 	function self.draw()
-		love.graphics.setColor(self.realColor())				-- set graphics with player color 
+		love.graphics.setColor(self.realColor())				-- set graphics with player color
 		love.graphics.polygon("fill", body:getWorldPoints(shape:getPoints()))	-- paint player
 		for k,sh in pairs(shadows) do						-- iterate through player shadows
 			sh.draw()							-- draw shadow
@@ -78,20 +78,20 @@ function Player(world, x, y, size, color)
 	-- returns => true if player actually jumps
 	function self.jump()
 		if not self.onAir() then						-- cannot jump if player is on air!
-			body:applyLinearImpulse(0, normalY*jumpForce)			
+			body:applyLinearImpulse(0, normalY*jumpForce)
 			return true
 		else
 			return false
 		end
 	end
-	
+
 	-- Check if player is leaning on something. Note that in case the player is touching something
 	-- from below(like jumping up to the ceiling) then it may still be consireded "on air".
 	-- returns => true if player is on air
 	function self.onAir()
-		return normalY <= 0	
+		return normalY <= 0
 	end
-	
+
 	-- Makes de player move left if possible
 	function self.moveLeft()
 		body:applyForce(-moveForce, 0)
@@ -113,17 +113,17 @@ function Player(world, x, y, size, color)
 	function self.ID()
 		return fixture:getUserData()
 	end
-	
+
 	-- returns => player X coordiante
 	function self.getX()
-		return body:getX()	
+		return body:getX()
 	end
-	
+
 	-- returns => player Y coordiante
 	function self.getY()
-		return body:getY()	
+		return body:getY()
 	end
-	
+
 	-- Add a contact/collision with an object
 	-- f :	fixture of contact object
 	-- ny:	normal Y applied to player from object
@@ -131,7 +131,7 @@ function Player(world, x, y, size, color)
 		contacts[f:getUserData()] = ny	-- store the object and its normal Y
 		normalY = normalY + ny		-- updates global normal Y of player
 	end
-	
+
 	--key: ID of contact object
 	--returns => true if contact removed
 	function self.removeContact(key)
@@ -141,7 +141,7 @@ function Player(world, x, y, size, color)
 		contacts[key] = nil		-- remove contact
 		return true
 	end
-	
+
 	-- returns player life points
 	function self.life()
 		return life
@@ -149,7 +149,7 @@ function Player(world, x, y, size, color)
 
 	-- returns player life %
 	function self.lifepct()
-		return life/MAX_LIFE	
+		return life/MAX_LIFE
 	end
 
 	-- Increase player life points
@@ -170,7 +170,7 @@ function Player(world, x, y, size, color)
 		end
 	end
 
-	-- Real player color based on life points and its basic color. 
+	-- Real player color based on life points and its basic color.
 	-- The color approaches background with life decreasing
 	function self.realColor()
 		c1 = self.getColor()				-- player color
@@ -178,17 +178,23 @@ function Player(world, x, y, size, color)
 		p = life/MAX_LIFE				-- life %
 		realcolor = linearColorInterpolation(p,c1,c2)	-- new player color
 
-		return realcolor				
+		return realcolor
 	end
 
-	return self 						-- player instance	
+	-- Shortcut for Body:getLinearVelocity
+	-- love2d wiki: https://love2d.org/wiki/Body:getLinearVelocity
+	function self.getLinearVelocity ()
+		return body:getLinearVelocity()
+	end
+
+	return self 						-- player instance
 end
 
 --------------------------------------------------
 -- 		STATIC METHODS			--
 --------------------------------------------------
 
--- Determine if the element is a player 
+-- Determine if the element is a player
 -- f:	element's fixture
 -- returns => true if player
 function isPlayer(f)
