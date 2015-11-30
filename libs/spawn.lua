@@ -61,7 +61,7 @@ local function getBehindOrNearPriority(vx,vy)
 	if (vx==0) then								-- vertical movement
 		if (vy==0) then 						-- not moving
 			priority = {4,5,2,7,1,3,6,8}
-		elseif (vy>0) then 						-- moving up
+		elseif (vy<0) then 						-- moving up
 			priority = {7,6,8,4,5,1,3,2}
 		else									-- moving down
 			priority = {2,1,3,4,5,6,8,7}
@@ -74,13 +74,13 @@ local function getBehindOrNearPriority(vx,vy)
 		end
 	else										-- diagonal movement
 		if (vx>0) then
-			if (vy>0) then						-- moving upright
+			if (vy<0) then						-- moving upright
 				priority = {6,4,7,1,8,2,5,3}
 			else								-- moving downright
 				priority = {1,4,2,6,3,7,5,8}
 			end
 		else
-			if (vy>0) then						-- moving upleft
+			if (vy<0) then						-- moving upleft
 				priority = {8,7,5,6,3,4,2,1}
 			else								-- moving downleft
 				priority = {3,2,5,1,8,4,7,6}
