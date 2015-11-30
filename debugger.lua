@@ -24,6 +24,8 @@ function debug ()
     -- adding output info
     info = info .. "ID:\t"..player.ID()
     info = info .. "\nLife:\t" .. math.floor(player.life())                                               -- player life
+    local vx,vy = player.getLinearVelocity()
+    info = info .. "\nLin.vel.:\t("..math.floor(vx) .. ","..math.floor(vy)..")"                           -- player linear velocity
     info = info .. "\nPosition:\t("..math.floor(player.getX()) .. ","..math.floor(player.getY())..")"     -- player position
     info = info .. "\nShadows:\t" .. player.shadowsCount()                                                -- player shadows count
     local c = player.contacts()                                                                           -- player contacts list
@@ -31,7 +33,7 @@ function debug ()
     local nc = 0                                                                                          -- contacts count
     for id,normalY in pairs(c) do                                                                         -- for each element contacted
       nc = nc + 1                                               -- increase contacts count
-      info = (nc > 1) and info .. "/" or info .. "\t"           -- add a tab indent if first element, else add a "/" as separator 
+      info = (nc > 1) and info .. "/" or info .. "\t"           -- add a tab indent if first element, else add a "/" as separator
       info = info .. id                                         -- insert object id
     end
     if nc == 0 then info = info .. "\t(any)" end                -- if any contact add the text "(any)"
