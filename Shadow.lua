@@ -51,9 +51,6 @@ function Shadow(world, player, size, color, spawn)
 	-- 		INSTANCE METHODS		--
 	--------------------------------------------------
 
-	-- Set spawn model
-	self.spawn = spawnBehindOrNear	-- behindOrNear model. For more info see: 'libs/spawn'
-
 	-- Draw the shadow
 	function self.draw()
 		love.graphics.setColor(self.getColor())				-- set graphics with shadow color
