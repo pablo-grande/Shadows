@@ -105,8 +105,8 @@ function Player(world, x, y, size, color)
 	-- Create a shadow from player
 	function self.createShadow()
 		s = Shadow(body:getWorld(), body:getX(), body:getY(), self.getSize(), self.realColor())	-- create shadow
-		table.insert(shadows, s)								-- store shadow
-		self.damage(SHADOW_LIFE_CONSUMPTION)							-- consume life
+		table.insert(shadows, s)																																-- store shadow
+		self.damage(SHADOW_LIFE_CONSUMPTION)																										-- consume life
 	end
 
 	-- returns => player ID
@@ -185,6 +185,15 @@ function Player(world, x, y, size, color)
 	-- love2d wiki: https://love2d.org/wiki/Body:getLinearVelocity
 	function self.getLinearVelocity ()
 		return body:getLinearVelocity()
+	end
+	-- Return number of shadows
+	function self.shadowsCount ()
+		return table.getn(shadows)
+	end
+
+	-- Return player contacts
+	function self.contacts ()
+		return contacts
 	end
 
 	return self 						-- player instance

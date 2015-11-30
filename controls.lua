@@ -14,8 +14,8 @@ function keyboardControls()
 	if love.keyboard.isDown("right") or love.keyboard.isDown("d") then
 		player.moveRight()
 	end
-	
-	-- move player to the left while pressing left arrow or "a"	
+
+	-- move player to the left while pressing left arrow or "a"
 	if love.keyboard.isDown("left") or love.keyboard.isDown("a") then
 		player.moveLeft()
 	end
@@ -37,5 +37,7 @@ function love.keyreleased(key)
 		player.createShadow()
 	elseif key == "c" then
 		stage.changeColor()		-- change stage color
+	elseif key == "i" then
+		DEBUG = not DEBUG			-- (de)activate debugging
 	end
 end
