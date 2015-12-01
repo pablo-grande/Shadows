@@ -11,12 +11,21 @@
 --          - not location available, expressed as an impossible location of x,y<0 (i.e: [-1,-1])
 --
 -- Spawn models/styles:
+--      - spawnSameBasic: same place of player
 --      - spawnBehindOrNear: behind the player or near(adjacent)
 --      - ...(others models)
 --
 ----------------------------------------------------------------------------------------------------------
 -- NOTE:TODO: This could be extended to any object, not only shadows
 ----------------------------------------------------------------------------------------------------------
+
+-- The position of the shadow is same as player
+-- player: player that creates the shadow
+-- return => shadow position
+-- NOTE:XXX: shadow can't be created over player so may produce odd results
+function spawnSameBasic (player)
+    return player.getX(),player.getY()
+end
 
 
 -- The position of the shadow is calculated relative to the player given the
@@ -166,13 +175,13 @@ local function fitIn (x,y,size)
     local contacts = dummyBody:getContactsList()                            -- XXX: don't now if already updated
     for i,c in ipairs(contacts) do                                          -- loop every contact to check if overlapping
         local x1,y1,x2,y2 = c:getPositions()
-        if not x2 then goto continue end                                         -- only one contact point XXX: guess this is enough to not overlapping
+        if not x2 then goto next end                                    -- only one contact point XXX: guess this is enough to not overlapping
         -- managing two contacts points
         if (x1 > left and x1 < right and y1 > top and y1 < bottom) or       -- if first point inside dummy or...
             (x2 > left and x2 < right and y2 > top and y2 < bottom) then    -- ...second point inside dummy
             return false                                                    -- then some point overlapping
         end
-        ::continue::
+        ::next:: --XXX: added in Lua 5.2
     end
     -- only arrives to this point if any contact overlap dummy object
     return true

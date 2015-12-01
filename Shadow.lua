@@ -9,7 +9,7 @@ local CLASS_NAME = "Shadow"
 local COUNT = 0					-- instances generated, used for ID
 local SIZE = 50					-- default size
 local COLOR = black 			-- default color
-local SPAWN = spawnBehindOrNear	-- default spawn function. See spawn models: 'libs/spawn'
+local SPAWN = spawnSameBasic	-- default spawn function. See spawn models: 'libs/spawn'
 
 --------------------------------------------------
 --		CONSTRUCTOR			--
