@@ -52,7 +52,7 @@
 function spawnBehindOrNear (player)
     local zones = getBehindOrNearPriority(player.getLinearVelocity())           -- zones sorted by priority
     local positions = getPositionsFromZones(player,zones)                       -- zones converted to coordinates
-    return getFittingPosition(positions,size) -- TODO: implement
+    return getFittingPosition(positions,size)                                   -- get spawn coordinates
 end
 
 -- Calculate priority for 'behindOrNear' model
@@ -134,7 +134,7 @@ end
 -- return => x,y of position
 local function getFittingPosition (positions,size)
     for i,p in ipairs(positions) do             -- for each position
-        if fitIn(unpack(p),size) then           -- check if shadow fit TODO: implement
+        if fitIn(unpack(p),size) then           -- check if shadow fit
             return unpack(p)                    -- return position
         end
     end
@@ -147,10 +147,32 @@ end
 -- return => true if fits
 -- NOTE:XXX: assuming a square object
 local function fitIn (x,y,size)
-    --TODO:implement
-    --local half = size/2
+    local half      = size/2
+    -- define object boundaries
+    local left      = x-half
+    local right     = x+half
+    local top       = y-half
+    local bottom    = y+half
+
     --check game boundaries
-    --if ((x-half) < 0 or (x+half) > screenWidth or (y-half) < 0 or (y+half) > screenHeight) then return false end
-    --Check collisions
-    return false
+    if (left < 0 or right > screenWidth or top < 0 or bottom > screenHeight) then return false end
+
+    --Create dummy square
+    --HACK: creating actual object to study how interact. May be a better solution.
+    local dummyBody = love.physics.newBody(world, x,y, "kinematic")			-- love2d body
+	local dummyShape = love.physics.newRectangleShape( 0,0, size, size )	-- love2d shape
+	local dummyFixture = love.physics.newFixture(body, shape)				-- love2d fixture
+    --Check contacts with dummy. Looking for overlaps: overlap = don't fit
+    local contacts = dummyBody:getContactsList()                            -- XXX: don't now if already updated
+    for i,c in ipairs(contacts) do                                          -- loop every contact to check if overlapping
+        local x1,y1,x2,y2 = c:getPositions()
+        if not x2 then continue end                                         -- only one contact point XXX: guess this is enough to not overlapping
+        -- managing two contacts points
+        if (x1 > left and x1 < right and y1 > top and y1 < bottom) or       -- if first point inside dummy or...
+            (x2 > left and x2 < right and y2 > top and y2 < bottom) then    -- ...second point inside dummy
+            return false                                                    -- then some point overlapping
+        end
+    end
+    -- only arrives to this point if any contact overlap dummy object
+    return true
 end
