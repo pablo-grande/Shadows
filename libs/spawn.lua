@@ -99,7 +99,7 @@ end
 local function getPositionsFromZones (player, zones)
         local size = player.getSize() --NOTE:XXX: assuming player and shadow have the same size always!
         local positions = {}                                                    -- store results
-        local x = player.getX(), y = player.getY()                              -- center reference to convert
+        local x,y = player.getX(),player.getY()                              -- center reference to convert
         for priority,zone in ipairs(zones) do                                   -- for each zone...
             table.insert(positions,{transalteZoneToPosition(zone,x,y,size)})    -- add equivalent coordinate
         end
@@ -121,9 +121,9 @@ local function transalteZoneToPosition (zone,cx,cy,size)
     end
     -- adjust X
     local col = 10*(zone-math.floor(zone))  -- get decimal part
-    if (col==1)                             -- first column
+    if (col==1) then                        -- first column
         x = cx - size
-    elseif (col==3)                         -- third column
+    elseif (col==3) then                    -- third column
         x = cx + size
     end
 
@@ -166,12 +166,13 @@ local function fitIn (x,y,size)
     local contacts = dummyBody:getContactsList()                            -- XXX: don't now if already updated
     for i,c in ipairs(contacts) do                                          -- loop every contact to check if overlapping
         local x1,y1,x2,y2 = c:getPositions()
-        if not x2 then continue end                                         -- only one contact point XXX: guess this is enough to not overlapping
+        if not x2 then goto continue end                                         -- only one contact point XXX: guess this is enough to not overlapping
         -- managing two contacts points
         if (x1 > left and x1 < right and y1 > top and y1 < bottom) or       -- if first point inside dummy or...
             (x2 > left and x2 < right and y2 > top and y2 < bottom) then    -- ...second point inside dummy
             return false                                                    -- then some point overlapping
         end
+        ::continue::
     end
     -- only arrives to this point if any contact overlap dummy object
     return true
