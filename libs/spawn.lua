@@ -21,28 +21,29 @@
 
 -- The position of the shadow is calculated relative to the player given the
 -- following scheme, where P is the player and the rest are the adjacent zones:
---        	-------------
---			| 1 | 2 | 3 |
---        	|-----------|
---			| 4 | P | 5 |
---			|-----------|
---			| 6 | 7 | 8 |
---			-------------
--- Numeric areas are the only ones taken into consideration.
---
--- If the player don't move check which is the first area where the shadow fits
--- following this order: 4,5,2,7,1,3,6,8
+--        	-------------------
+--			| 1.1 | 1.2 | 1.3 |
+--        	|-----------------|
+--			| 2.1 |  P  | 2.3 |
+--			|-----------------|
+--			| 3.1 | 3.2 | 3.3 |
+--			-------------------
+-- Numeric areas are the only ones taken into consideration. Entire part represents
+-- the row and decimal part represents the column.
+
+-- If the player don't move then try to place the shadow next to in
+-- following this order: 2.1,2.3,1.2,3.2,1.1,1.3,3.1,3.3
 --
 -- If the player is moving then try to place de shadow behind. So the priority order
 -- is as follows:
---		moving right 		=> 4,1,6,2,7,3,8,5
--- 		moving left	 		=> 5,3,8,2,4,1,6,4
--- 		moving up 			=> 7,6,8,4,5,1,3,2
--- 		moving down	  		=> 2,1,3,4,5,6,8,7
--- 		moving upleft 		=> 8,7,5,6,3,4,2,1
--- 		moving upright 		=> 6,4,7,1,8,2,5,3
--- 		moving downleft		=> 3,2,5,1,8,4,7,6
--- 		moving downright	=> 1,4,2,6,3,7,5,8
+--		moving right 		=> 2.1,1.1,3.1,1.2,3.2,1.3,3.3,2.3
+-- 		moving left	 		=> 2.3,1.3,3.3,1.2,2.1,1.1,3.1,2.1
+-- 		moving up 			=> 3.2,3.1,3.3,2.1,2.3,1.1,1.3,1.2
+-- 		moving down	  		=> 1.2,1.1,1.3,2.1,2.3,3.1,3.3,3.2
+-- 		moving upleft 		=> 3.3,3.2,2.3,3.1,1.3,2.1,1.2,1.1
+-- 		moving upright 		=> 3.1,2.1,3.2,1.1,3.3,1.2,2.3,1.3
+-- 		moving downleft		=> 1.3,1.2,2.3,1.1,3.3,2.1,3.2,3.1
+-- 		moving downright	=> 1.1,2.1,1.2,3.1,1.3,3.2,2.3,3.3
 --
 -- if shadow don't fit in any area then it can't be created
 ----------------------
@@ -50,7 +51,8 @@
 -- returns => spawn position (x,y) or (-1,-1) if not possible
 function spawnBehindOrNear (player)
     local zones = getBehindOrNearPriority(player.getLinearVelocity())           -- zones sorted by priority
-    --TODO: comprobar si se puede poner la sombra en dichas zonas
+    local positions = getPositionsFromZones(player,zones)                       -- zones converted to coordinates
+    return getFittingPosition(positions,size) -- TODO: implement
 end
 
 -- Calculate priority for 'behindOrNear' model
@@ -60,32 +62,95 @@ local function getBehindOrNearPriority(vx,vy)
     local priority = {} 						-- priority order of zones
 	if (vx==0) then								-- vertical movement
 		if (vy==0) then 						-- not moving
-			priority = {4,5,2,7,1,3,6,8}
+			priority = {2.1,2.3,1.2,3.2,1.1,1.3,3.1,3.3}
 		elseif (vy<0) then 						-- moving up
-			priority = {7,6,8,4,5,1,3,2}
+			priority = {3.2,3.1,3.3,2.1,2.3,1.1,1.3,1.2}
 		else									-- moving down
-			priority = {2,1,3,4,5,6,8,7}
+			priority = {1.2,1.1,1.3,2.1,2.3,3.1,3.3,3.2}
 		end
 	elseif (vy==0) then							-- horizontal movement
 		if (vx>0) then 							-- moving right
-			priority = {4,1,6,2,7,3,8,5}
+			priority = {2.1,1.1,3.1,1.2,3.2,1.3,3.3,2.3}
 		else									-- moving left
-			priority = {5,3,8,2,4,1,6,4}
+			priority = {2.3,1.3,3.3,1.2,2.1,1.1,3.1,2.1}
 		end
 	else										-- diagonal movement
 		if (vx>0) then
 			if (vy<0) then						-- moving upright
-				priority = {6,4,7,1,8,2,5,3}
+				priority = {3.1,2.1,3.2,1.1,3.3,1.2,2.3,1.3}
 			else								-- moving downright
-				priority = {1,4,2,6,3,7,5,8}
+				priority = {1.1,2.1,1.2,3.1,1.3,3.2,2.3,3.3}
 			end
 		else
 			if (vy<0) then						-- moving upleft
-				priority = {8,7,5,6,3,4,2,1}
+				priority = {3.3,3.2,2.3,3.1,1.3,2.1,1.2,1.1}
 			else								-- moving downleft
-				priority = {3,2,5,1,8,4,7,6}
+				priority = {1.3,1.2,2.3,1.1,3.3,2.1,3.2,3.1}
 			end
 		end
 	end
 	return priority
+end
+
+-- Calculate equivalent coordinates for each zone
+-- player: player used as reference
+-- zones: list of zones
+-- return => list of coordinates
+local function getPositionsFromZones (player, zones)
+        local size = player.getSize() --NOTE:XXX: assuming player and shadow have the same size always!
+        local positions = {}                                                    -- store results
+        local x = player.getX(), y = player.getY()                              -- center reference to convert
+        for priority,zone in ipairs(zones) do                                   -- for each zone...
+            table.insert(positions,{transalteZoneToPosition(zone,x,y,size)})    -- add equivalent coordinate
+        end
+        return positions
+end
+
+-- Transalate a given zone of 'spawnBehindOrNear' scheme to its corresponent position
+-- using the player as reference.
+-- zone: zone to convert. Decimal number with format x.y where x=row and y=column
+-- cx,cy: center of the reference element
+-- size: player size
+local function transalteZoneToPosition (zone,cx,cy,size)
+    local x,y
+    -- adjust Y
+    if (zone < 2) then                      -- first row
+        y = cy - size
+    elseif (zone > 3) then                  -- third row
+        y = cy + size
+    end
+    -- adjust X
+    local col = 10*(zone-math.floor(zone))  -- get decimal part
+    if (col==1)                             -- first column
+        x = cx - size
+    elseif (col==3)                         -- third column
+        x = cx + size
+    end
+
+    return x,y                              -- return position
+end
+
+-- Select the first position where a shadow fits
+-- return => x,y of position
+local function getFittingPosition (positions,size)
+    for i,p in ipairs(positions) do             -- for each position
+        if fitIn(unpack(p),size) then           -- check if shadow fit TODO: implement
+            return unpack(p)                    -- return position
+        end
+    end
+    return -1,-1                                -- don't fit at any position
+end
+
+-- Check if the object fits on a especific position
+-- x,y:  position to check(center)
+-- size: object size
+-- return => true if fits
+-- NOTE:XXX: assuming a square object
+local function fitIn (x,y,size)
+    --TODO:implement
+    --local half = size/2
+    --check game boundaries
+    --if ((x-half) < 0 or (x+half) > screenWidth or (y-half) < 0 or (y+half) > screenHeight) then return false end
+    --Check collisions
+    return false
 end
