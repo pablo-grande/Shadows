@@ -104,7 +104,7 @@ function Player(world, x, y, size, color)
 
 	-- Create a shadow from player
 	function self.createShadow()
-		s = Shadow(body:getWorld(), self, self.getSize(), self.realColor())	-- create shadow
+		s = Shadow(body:getWorld(), self, self.getSize(), self.realColor(),spawnBehindOrNear)	-- create shadow
 		table.insert(shadows, s)																																-- store shadow
 		self.damage(SHADOW_LIFE_CONSUMPTION)																										-- consume life
 	end
