@@ -38,6 +38,9 @@ end
 -- Calculate priority for 'behindOrNear' model
 -- vx: X component of player linear velocity
 -- vy: Y component of player linear velocity
+-- return => zones sorted by priority
+-- TODO: aplicar un margen de desviacion ya que aunque se mueva solo en horizontal la friccion puede
+--      generar una cierta componente vy, lo mismo en vertical. Probar con un margen de {-2,2}
 local function getBehindOrNearPriority(vx,vy)
     local priority = {} 						-- priority order of zones
 	if (vx==0) then								-- vertical movement
@@ -69,6 +72,9 @@ local function getBehindOrNearPriority(vx,vy)
 			end
 		end
 	end
+    for k,v in pairs(priority) do
+        print(k,v)
+    end
 	return priority
 end
 
