@@ -105,6 +105,7 @@ end
 -- return => true if fits
 -- NOTE:XXX: assuming a square object
 local function fitIn (x,y,size)
+    local fit       = true      -- result
     local half      = size/2
     -- define object boundaries
     local left      = x-half
@@ -119,21 +120,23 @@ local function fitIn (x,y,size)
     --HACK: creating actual object to study how interact. May be a better solution.
     local dummyBody = love.physics.newBody(world, x,y, "kinematic")			-- love2d body
 	local dummyShape = love.physics.newRectangleShape( 0,0, size, size )	-- love2d shape
-	local dummyFixture = love.physics.newFixture(body, shape)				-- love2d fixture
+	local dummyFixture = love.physics.newFixture(dummyBody, dummyShape)		-- love2d fixture
+    dummyFixture:setUserData("dummy")        								    -- set ID
     --Check contacts with dummy. Looking for overlaps: overlap = don't fit
-    local contacts = dummyBody:getContactsList()                            -- XXX: don't now if already updated
+    local contacts = dummyBody:getContactList()                            -- XXX: don't now if already updated
     for i,c in ipairs(contacts) do                                          -- loop every contact to check if overlapping
         local x1,y1,x2,y2 = c:getPositions()
         if not x2 then goto next end                                    -- only one contact point XXX: guess this is enough to not overlapping
         -- managing two contacts points
         if (x1 > left and x1 < right and y1 > top and y1 < bottom) or       -- if first point inside dummy or...
             (x2 > left and x2 < right and y2 > top and y2 < bottom) then    -- ...second point inside dummy
-            return false                                                    -- then some point overlapping
+            fit = false                                                     -- then some point overlapping
+            break
         end
         ::next:: --XXX: added in Lua 5.2
     end
-    -- only arrives to this point if any contact overlap dummy object
-    return true
+    dummyFixture:destroy()  -- destroy dummy square
+    return fit
 end
 
 -- Select the first position where a shadow fits
