@@ -121,10 +121,10 @@ local function fitIn (x,y,size)
     local dummyBody = love.physics.newBody(world, x,y, "kinematic")			-- love2d body
 	local dummyShape = love.physics.newRectangleShape( 0,0, size, size )	-- love2d shape
 	local dummyFixture = love.physics.newFixture(dummyBody, dummyShape)		-- love2d fixture
-    dummyFixture:setUserData("dummy")        								    -- set ID
+    dummyFixture:setUserData("dummy")        								-- set ID
     --Check contacts with dummy. Looking for overlaps: overlap = don't fit
     local contacts = dummyBody:getContactList()                            -- XXX: don't now if already updated
-    for i,c in ipairs(contacts) do                                          -- loop every contact to check if overlapping
+    for i,c in ipairs(contacts) do                                         -- loop every contact to check if overlapping
         local x1,y1,x2,y2 = c:getPositions()
         if not x2 then goto next end                                    -- only one contact point XXX: guess this is enough to not overlapping
         -- managing two contacts points
