@@ -19,6 +19,10 @@
 -- NOTE:TODO: This could be extended to any object, not only shadows
 ----------------------------------------------------------------------------------------------------------
 
+----------------------------------------------------------------------------------------------------------
+--              MODEL 1
+----------------------------------------------------------------------------------------------------------
+
 -- The position of the shadow is same as player
 -- player: player that creates the shadow
 -- return => shadow position
@@ -27,42 +31,9 @@ function spawnSameBasic (player)
     return player.getX(),player.getY()
 end
 
-
--- The position of the shadow is calculated relative to the player given the
--- following scheme, where P is the player and the rest are the adjacent zones:
---        	-------------------
---			| 1.1 | 1.2 | 1.3 |
---        	|-----------------|
---			| 2.1 |  P  | 2.3 |
---			|-----------------|
---			| 3.1 | 3.2 | 3.3 |
---			-------------------
--- Numeric areas are the only ones taken into consideration. Entire part represents
--- the row and decimal part represents the column.
-
--- If the player don't move then try to place the shadow next to in
--- following this order: 2.1,2.3,1.2,3.2,1.1,1.3,3.1,3.3
---
--- If the player is moving then try to place de shadow behind. So the priority order
--- is as follows:
---		moving right 		=> 2.1,1.1,3.1,1.2,3.2,1.3,3.3,2.3
--- 		moving left	 		=> 2.3,1.3,3.3,1.2,2.1,1.1,3.1,2.1
--- 		moving up 			=> 3.2,3.1,3.3,2.1,2.3,1.1,1.3,1.2
--- 		moving down	  		=> 1.2,1.1,1.3,2.1,2.3,3.1,3.3,3.2
--- 		moving upleft 		=> 3.3,3.2,2.3,3.1,1.3,2.1,1.2,1.1
--- 		moving upright 		=> 3.1,2.1,3.2,1.1,3.3,1.2,2.3,1.3
--- 		moving downleft		=> 1.3,1.2,2.3,1.1,3.3,2.1,3.2,3.1
--- 		moving downright	=> 1.1,2.1,1.2,3.1,1.3,3.2,2.3,3.3
---
--- if shadow don't fit in any area then it can't be created
-----------------------
--- player: player instance that creates the shadow. Used as reference.
--- returns => spawn position (x,y) or (-1,-1) if not possible
-function spawnBehindOrNear (player)
-    local zones = getBehindOrNearPriority(player.getLinearVelocity())           -- zones sorted by priority
-    local positions = getPositionsFromZones(player,zones)                       -- zones converted to coordinates
-    return getFittingPosition(positions,size)                                   -- get spawn coordinates
-end
+----------------------------------------------------------------------------------------------------------
+--              MODEL 2
+----------------------------------------------------------------------------------------------------------
 
 -- Calculate priority for 'behindOrNear' model
 -- vx: X component of player linear velocity
@@ -101,20 +72,6 @@ local function getBehindOrNearPriority(vx,vy)
 	return priority
 end
 
--- Calculate equivalent coordinates for each zone
--- player: player used as reference
--- zones: list of zones
--- return => list of coordinates
-local function getPositionsFromZones (player, zones)
-        local size = player.getSize() --NOTE:XXX: assuming player and shadow have the same size always!
-        local positions = {}                                                    -- store results
-        local x,y = player.getX(),player.getY()                              -- center reference to convert
-        for priority,zone in ipairs(zones) do                                   -- for each zone...
-            table.insert(positions,{transalteZoneToPosition(zone,x,y,size)})    -- add equivalent coordinate
-        end
-        return positions
-end
-
 -- Transalate a given zone of 'spawnBehindOrNear' scheme to its corresponent position
 -- using the player as reference.
 -- zone: zone to convert. Decimal number with format x.y where x=row and y=column
@@ -137,17 +94,6 @@ local function transalteZoneToPosition (zone,cx,cy,size)
     end
 
     return x,y                              -- return position
-end
-
--- Select the first position where a shadow fits
--- return => x,y of position
-local function getFittingPosition (positions,size)
-    for i,p in ipairs(positions) do             -- for each position
-        if fitIn(unpack(p),size) then           -- check if shadow fit
-            return unpack(p)                    -- return position
-        end
-    end
-    return -1,-1                                -- don't fit at any position
 end
 
 -- Check if the object fits on a especific position
@@ -185,4 +131,65 @@ local function fitIn (x,y,size)
     end
     -- only arrives to this point if any contact overlap dummy object
     return true
+end
+
+-- Select the first position where a shadow fits
+-- return => x,y of position
+local function getFittingPosition (positions,size)
+    for k,p in pairs(positions) do             -- for each position
+        if fitIn(p[1],p[2],size) then           -- check if shadow fit
+            return p[1],p[2]                    -- return position
+        end
+    end
+    return -1,-1                                -- don't fit at any position
+end
+
+-- Calculate equivalent coordinates for each zone
+-- player: player used as reference
+-- zones: list of zones
+-- return => list of coordinates
+local function getPositionsFromZones (player, zones)
+        local size = player.getSize() --NOTE:XXX: assuming player and shadow have the same size always!
+        local positions = {}                                                    -- store results
+        local x,y = player.getX(),player.getY()                              -- center reference to convert
+        for priority,zone in ipairs(zones) do                                   -- for each zone...
+            table.insert(positions,{transalteZoneToPosition(zone,x,y,size)})    -- add equivalent coordinate
+        end
+        return positions
+end
+
+-- The position of the shadow is calculated relative to the player given the
+-- following scheme, where P is the player and the rest are the adjacent zones:
+--        	-------------------
+--			| 1.1 | 1.2 | 1.3 |
+--        	|-----------------|
+--			| 2.1 |  P  | 2.3 |
+--			|-----------------|
+--			| 3.1 | 3.2 | 3.3 |
+--			-------------------
+-- Numeric areas are the only ones taken into consideration. Entire part represents
+-- the row and decimal part represents the column.
+--
+-- If the player don't move then try to place the shadow next to in
+-- following this order: 2.1,2.3,1.2,3.2,1.1,1.3,3.1,3.3
+--
+-- If the player is moving then try to place de shadow behind. So the priority order
+-- is as follows:
+--		moving right 		=> 2.1,1.1,3.1,1.2,3.2,1.3,3.3,2.3
+-- 		moving left	 		=> 2.3,1.3,3.3,1.2,2.1,1.1,3.1,2.1
+-- 		moving up 			=> 3.2,3.1,3.3,2.1,2.3,1.1,1.3,1.2
+-- 		moving down	  		=> 1.2,1.1,1.3,2.1,2.3,3.1,3.3,3.2
+-- 		moving upleft 		=> 3.3,3.2,2.3,3.1,1.3,2.1,1.2,1.1
+-- 		moving upright 		=> 3.1,2.1,3.2,1.1,3.3,1.2,2.3,1.3
+-- 		moving downleft		=> 1.3,1.2,2.3,1.1,3.3,2.1,3.2,3.1
+-- 		moving downright	=> 1.1,2.1,1.2,3.1,1.3,3.2,2.3,3.3
+--
+-- if shadow don't fit in any area then it can't be created
+--
+-- player: player instance that creates the shadow. Used as reference.
+-- returns => spawn position (x,y) or (-1,-1) if not possible
+function spawnBehindOrNear (player)
+    local zones = getBehindOrNearPriority(player.getLinearVelocity())           -- zones sorted by priority
+    local positions = getPositionsFromZones(player,zones)                       -- zones converted to coordinates
+    return getFittingPosition(positions,player.getSize())                       -- get spawn coordinates
 end
