@@ -72,34 +72,31 @@ local function getBehindOrNearPriority(vx,vy)
 			end
 		end
 	end
-    for k,v in pairs(priority) do
-        print(k,v)
-    end
+
 	return priority
 end
 
 -- Transalate a given zone of 'spawnBehindOrNear' scheme to its corresponent position
--- using the player as reference.
+-- using the player as reference bypplies a shift from player to zone
 -- zone: zone to convert. Decimal number with format x.y where x=row and y=column
 -- cx,cy: center of the reference element
 -- size: player size
 local function transalteZoneToPosition (zone,cx,cy,size)
-    local x,y
+    local x,y = cx,cy
     -- adjust Y
-    if (zone < 2) then                      -- first row
-        y = cy - size
-    elseif (zone > 3) then                  -- third row
-        y = cy + size
+    if (zone < 2) then      -- first row
+        y = cy - size       -- shift up
+    elseif (zone > 3) then  -- third row
+        y = cy + size       -- shift down
     end
     -- adjust X
-    local col = 10*(zone-math.floor(zone))  -- get decimal part
-    if (col==1) then                        -- first column
-        x = cx - size
-    elseif (col==3) then                    -- third column
-        x = cx + size
+    local col = math.floor(10*(zone-math.floor(zone)))  -- get decimal part
+    if (col==1) then        -- first column
+        x = cx - size       -- shift left
+    elseif (col==3) then    -- third column
+        x = cx + size       -- shift right
     end
-
-    return x,y                              -- return position
+    return x,y              -- return position
 end
 
 -- Check if the object fits on a especific position
@@ -157,7 +154,7 @@ end
 local function getPositionsFromZones (player, zones)
         local size = player.getSize() --NOTE:XXX: assuming player and shadow have the same size always!
         local positions = {}                                                    -- store results
-        local x,y = player.getX(),player.getY()                              -- center reference to convert
+        local x,y = player.getX(),player.getY()                                 -- center reference to convert
         for priority,zone in ipairs(zones) do                                   -- for each zone...
             table.insert(positions,{transalteZoneToPosition(zone,x,y,size)})    -- add equivalent coordinate
         end
