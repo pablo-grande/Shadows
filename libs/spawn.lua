@@ -35,39 +35,42 @@ end
 --              MODEL 2
 ----------------------------------------------------------------------------------------------------------
 
--- Calculate priority for 'behindOrNear' model
+-- Calculate priority for 'behindOrNear' model.
+-- The linear velocity is not completely accurate. Although the player moves only in one axis,
+-- vertical or horizontal, also may be some (very small amount) of linear velocity along the other axis
+-- due to friction or other reasons, so we have a margin of deviation that must be overcome to consider movement
 -- vx: X component of player linear velocity
 -- vy: Y component of player linear velocity
 -- return => zones sorted by priority
--- TODO: aplicar un margen de desviacion ya que aunque se mueva solo en horizontal la friccion puede
---      generar una cierta componente vy, lo mismo en vertical. Probar con un margen de {-2,2}
 local function getBehindOrNearPriority(vx,vy)
+    local dev = 5                               -- deviation margin
     local priority = {} 						-- priority order of zones
-	if (vx==0) then								-- vertical movement
-		if (vy==0) then 						-- not moving
+    local avx,avy = math.abs(vx),math.abs(vy)   -- absolute linear velocity
+	if (avx<dev) then				            -- not horizontal movement
+		if (avy<dev) then			            -- not horizontal movement, not moving
 			priority = {2.1,2.3,1.2,3.2,1.1,1.3,3.1,3.3}
-		elseif (vy<0) then 						-- moving up
+		elseif (vy<-dev) then 					-- moving up
 			priority = {3.2,3.1,3.3,2.1,2.3,1.1,1.3,1.2}
-		else									-- moving down
+		elseif (vy>dev)	then					-- moving down
 			priority = {1.2,1.1,1.3,2.1,2.3,3.1,3.3,3.2}
 		end
-	elseif (vy==0) then							-- horizontal movement
-		if (vx>0) then 							-- moving right
+	elseif (avy<dev) then						-- not vertical movement
+		if (vx>dev) then						-- moving right
 			priority = {2.1,1.1,3.1,1.2,3.2,1.3,3.3,2.3}
-		else									-- moving left
+		elseif (vx<-dev) then					-- moving left
 			priority = {2.3,1.3,3.3,1.2,2.1,1.1,3.1,2.1}
 		end
 	else										-- diagonal movement
-		if (vx>0) then
-			if (vy<0) then						-- moving upright
+		if (vx>dev) then
+			if (vy<-dev) then					-- moving upright
 				priority = {3.1,2.1,3.2,1.1,3.3,1.2,2.3,1.3}
-			else								-- moving downright
+			elseif (vy>dev) then				-- moving downright
 				priority = {1.1,2.1,1.2,3.1,1.3,3.2,2.3,3.3}
 			end
 		else
-			if (vy<0) then						-- moving upleft
+			if (vy<-dev) then					-- moving upleft
 				priority = {3.3,3.2,2.3,3.1,1.3,2.1,1.2,1.1}
-			else								-- moving downleft
+			elseif (vy>dev) then				-- moving downleft
 				priority = {1.3,1.2,2.3,1.1,3.3,2.1,3.2,3.1}
 			end
 		end
