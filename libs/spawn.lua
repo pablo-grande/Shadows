@@ -86,19 +86,22 @@ end
 -- size: player size
 local function transalteZoneToPosition (zone,cx,cy,size)
     local x,y = cx,cy
+    local margin = 2        -- margin with player
+    local shift = margin + size
     -- adjust Y
     if (zone < 2) then      -- first row
-        y = cy - size       -- shift up
+        y = cy - shift      -- shift up
     elseif (zone > 3) then  -- third row
-        y = cy + size       -- shift down
+        y = cy + shift      -- shift down
     end
     -- adjust X
-    local col = math.floor(10*(zone-math.floor(zone)))  -- get decimal part
+    local col = math.floor(10*(zone-math.floor(zone))+0.1)  -- get decimal part
     if (col==1) then        -- first column
-        x = cx - size       -- shift left
+        x = cx - shift      -- shift left
     elseif (col==3) then    -- third column
-        x = cx + size       -- shift right
+        x = cx + shift      -- shift right
     end
+    print(zone,x,y)
     return x,y              -- return position
 end
 
@@ -108,7 +111,7 @@ end
 -- return => true if fits
 -- NOTE:XXX: assuming a square object
 local function fitIn (x,y,size)
-    local fit       = true      -- result
+    print("check fit:",x,y)
     local half      = size/2
     -- define object boundaries
     local left      = x-half
@@ -119,34 +122,45 @@ local function fitIn (x,y,size)
     --check game boundaries
     if (left < 0 or right > screenWidth or top < 0 or bottom > screenHeight) then return false end
 
-    --Create dummy square
-    --HACK: creating actual object to study how interact. May be a better solution.
-    local dummyBody = love.physics.newBody(world, x,y, "kinematic")			-- love2d body
-	local dummyShape = love.physics.newRectangleShape( 0,0, size, size )	-- love2d shape
-	local dummyFixture = love.physics.newFixture(dummyBody, dummyShape)		-- love2d fixture
-    dummyFixture:setUserData("dummy")        								-- set ID
-    --Check contacts with dummy. Looking for overlaps: overlap = don't fit
-    local contacts = dummyBody:getContactList()                            -- XXX: don't now if already updated
-    for i,c in ipairs(contacts) do                                         -- loop every contact to check if overlapping
-        local x1,y1,x2,y2 = c:getPositions()
-        if not x2 then goto next end                                    -- only one contact point XXX: guess this is enough to not overlapping
-        -- managing two contacts points
-        if (x1 > left and x1 < right and y1 > top and y1 < bottom) or       -- if first point inside dummy or...
-            (x2 > left and x2 < right and y2 > top and y2 < bottom) then    -- ...second point inside dummy
-            fit = false                                                     -- then some point overlapping
-            break
+    local contacts = {
+        list = {},          -- [key] => value list of objects contacted as [object_ID] => #contacts
+        totalCount = 0,     -- total contacts with all rays
+        distinctCount = 0   -- distinct objects contacted (list lenght)
+    }
+
+    local function callback (fixture, x, y, xn, yn, fraction)
+        local ID = fixture:getUserData()
+        if not contacts.list[ID] then                   -- new object contact
+            contacts.list[ID] = 1
+            contacts.distinctCount = contacts.distinctCount + 1
+        else
+            contacts.list[ID] = contacts.list[ID] + 1
         end
-        ::next:: --XXX: added in Lua 5.2
+        contacts.totalCount = contacts.totalCount + 1
+        return 1
     end
-    dummyFixture:destroy()  -- destroy dummy square
-    return fit
+
+    world:rayCast(left,top,right,top,callback)          -- top side
+    world:rayCast(left,bottom,right,bottom,callback)    -- bottom side
+    world:rayCast(left,top,left,bottom,callback)        -- left side
+    world:rayCast(right,top,right,bottom,callback)      -- right side
+    world:rayCast(left,top,right,bottom,callback)       -- diagonal 1
+    world:rayCast(left,bottom,right,top,callback)       -- diagonal 2
+
+    print("distinct hits", contacts.distinctCount)
+    for object,count in pairs(contacts.list) do
+        print(object,"=>",count,"hits")
+    end
+
+    return contacts.distinctCount==0
 end
 
 -- Select the first position where a shadow fits
 -- return => x,y of position
 local function getFittingPosition (positions,size)
-    for k,p in pairs(positions) do             -- for each position
+    for k,p in pairs(positions) do              -- for each position
         if fitIn(p[1],p[2],size) then           -- check if shadow fit
+            print("fit:",p[1],p[2])
             return p[1],p[2]                    -- return position
         end
     end
@@ -161,9 +175,14 @@ local function getPositionsFromZones (player, zones)
         local size = player.getSize() --NOTE:XXX: assuming player and shadow have the same size always!
         local positions = {}                                                    -- store results
         local x,y = player.getX(),player.getY()                                 -- center reference to convert
+        print("player: ",x,y)
+        print("--------------------------------")
+        print("zone","X","Y")
+        print("--------------------------------")
         for priority,zone in ipairs(zones) do                                   -- for each zone...
             table.insert(positions,{transalteZoneToPosition(zone,x,y,size)})    -- add equivalent coordinate
         end
+        print("--------------------------------")
         return positions
 end
 
@@ -179,7 +198,7 @@ end
 -- Numeric areas are the only ones taken into consideration. Entire part represents
 -- the row and decimal part represents the column.
 --
--- If the player don't move then try to place the shadow next to in
+-- If the player don't move then try to place the shadow next to
 -- following this order: 2.1,2.3,1.2,3.2,1.1,1.3,3.1,3.3
 --
 -- If the player is moving then try to place de shadow behind. So the priority order
