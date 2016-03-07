@@ -51,6 +51,7 @@ function Player(world, x, y, size, color)
 	local body = love.physics.newBody(world, x,y, "dynamic")		-- love2d body
 	local shape = love.physics.newRectangleShape( 0,0, size, size )		-- love2d shape
 	local fixture = love.physics.newFixture(body, shape)			-- love2d fixture
+	body:setFixedRotation(true)						-- prevent rotation
 	fixture:setFriction(1)							-- set player's friction to 1 (max)
 	fixture:setUserData(CLASS_NAME..COUNT)					-- set ID = CLASS_NAME + number
 	local shadows = {}							-- player's shadows
