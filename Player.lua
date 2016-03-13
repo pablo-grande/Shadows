@@ -48,14 +48,13 @@ function Player(world, x, y, size, color)
 	local moveForce = 600							-- force amount used to move the player
 	local normalY = 0							-- total Y component of normal vector as sum of each contact
 	local normalX = 0							-- total X component of normal vector as sum of each contact
-	local body = love.physics.newBody(world, x,y, "dynamic")		-- love2d body
-	local shape = love.physics.newRectangleShape( 0,0, size, size )		-- love2d shape
-	local fixture = love.physics.newFixture(body, shape)			-- love2d fixture
+	local body = self.setBody(world,"dynamic")
+	local fixture = self.setFixture(body,CLASS_NAME..COUNT)	-- Square fixture
 	body:setFixedRotation(true)						-- prevent rotation
 	fixture:setFriction(1)							-- set player's friction to 1 (max)
-	fixture:setUserData(CLASS_NAME..COUNT)					-- set ID = CLASS_NAME + number
 	local shadows = {}							-- player's shadows
 	local contacts = {}							-- current contacts.Array where key=object_ID;value=normalY
+	local shape = self.getShape()
 
 	--------------------------------------------------
 	-- 		INSTANCE METHODS		--

@@ -41,10 +41,10 @@ function Shadow(world, x, y, size, color)
 	--------------------------------------------------
 	-- 		   PROPERTIES			--
 	--------------------------------------------------
-	local body = love.physics.newBody(world, x,y, "kinematic")		-- love2d body
-	local shape = love.physics.newRectangleShape( 0,0, size, size )		-- love2d shape
-	local fixture = love.physics.newFixture(body, shape)			-- love2d fixture
-	fixture:setUserData(CLASS_NAME..COUNT)					-- set ID = CLASS_NAME + number
+	-- local body = love.physics.newBody(world, x,y, "kinematic")		-- love2d body
+	local body = self.setBody(world,"kinematic")
+	local fixture = self.setFixture(body,CLASS_NAME..COUNT)	-- Square fixture
+	local shape = self.getShape()
 
 	--------------------------------------------------
 	-- 		INSTANCE METHODS		--
