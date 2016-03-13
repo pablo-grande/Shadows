@@ -115,12 +115,12 @@ function Player(world, x, y, size, color)
 		return fixture:getUserData()
 	end
 
-	-- returns => player X coordiante
+	-- returns => player X coordinate
 	function self.getX()
 		return body:getX()
 	end
 
-	-- returns => player Y coordiante
+	-- returns => player Y coordinate
 	function self.getY()
 		return body:getY()
 	end
