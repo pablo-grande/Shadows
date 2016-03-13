@@ -153,15 +153,6 @@ function Player(world, x, y, size, color)
 		return life/MAX_LIFE
 	end
 
-	-- Increase player life points
-	-- p:	healing points(positive value)
-	function self.heal(p)
-		life = life + p			-- increase life points
-		if life > MAX_LIFE then		-- ensure not exceed the limit
-			life = MAX_LIFE
-		end
-	end
-
 	-- Decrease player life points
 	-- p:	damage points(positive value)
 	function self.damage(p)
