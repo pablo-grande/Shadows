@@ -3,16 +3,19 @@ Shadows
 
 A game about progress and sacrifice, with squares.
 
-### About
+Damien is a square, but not a regular square. He can jump, move and in exchange of some of his life can cast his shadow.
 
-This is a very simple, unpretentious videogame made with LÖVE and Lua. 
+Shadows have some properties, generally it transforms into a solid object, but not always. Shadows can do a lot of things such as explode, make Damien bounce or sink , etc.
 
-Wiki available (only in Spanish).
 
-### File structure
+## Gameplay
 
-File structure is very straighforward. The filename indicates which structure or entity controls in the game.
+:arrow_left: | `a` - Left
 
-`libs/` directory contains just a bunch of definitions and helper functions to manage sounds, colours and physics.
+:arrow_right: | `d` - Right
+
+:arrow_up: | `w` | `space bar` - Jump
+
+`s` - Shadow
 
 
