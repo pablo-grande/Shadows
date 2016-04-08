@@ -31,7 +31,7 @@ function debug ()
     local nc = 0                                                                                          -- contacts count
     for id,normalY in pairs(c) do                                                                         -- for each element contacted
       nc = nc + 1                                               -- increase contacts count
-      info = (nc > 1) and info .. "/" or info .. "\t"           -- add a tab indent if first element, else add a "/" as separator 
+      info = (nc > 1) and info .. "/" or info .. "\t"           -- add a tab indent if first element, else add a "/" as separator
       info = info .. id                                         -- insert object id
     end
     if nc == 0 then info = info .. "\t(any)" end                -- if any contact add the text "(any)"
@@ -40,8 +40,8 @@ function debug ()
 
     -- draw debugging box
     local font = love.graphics.getFont()
-    local width,lines = font:getWrap(info,WIDTH)
-    local boxHeight = lines*font:getHeight()
+    local width,wrappedtext = font:getWrap(info,WIDTH)
+    local boxHeight = #wrappedtext*font:getHeight()
     love.graphics.setColor(RGBA(black,semitransparent))
     love.graphics.rectangle("fill",0,0,WIDTH,boxHeight)
 

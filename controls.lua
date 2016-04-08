@@ -11,17 +11,17 @@
 --Do some keyboard checks every game update
 function keyboardControls()
 	-- move player to the right while pressing right arrow or "d"
-	if love.keyboard.isDown("right") or love.keyboard.isDown("d") then
+	if love.keyboard.isDown("right","d") then
 		player.moveRight()
 	end
 
 	-- move player to the left while pressing left arrow or "a"
-	if love.keyboard.isDown("left") or love.keyboard.isDown("a") then
+	if love.keyboard.isDown("left","a") then
 		player.moveLeft()
 	end
 
 	-- make the player jump when space/up arrow/"w" is pressed
-	if love.keyboard.isDown(" ")  or love.keyboard.isDown("w") or love.keyboard.isDown("up") then
+	if love.keyboard.isDown("space","w","up") then
 		player.jump()
 	end
 end
