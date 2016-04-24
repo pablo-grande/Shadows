@@ -1,9 +1,10 @@
-function Shape(x, y, color)
-  	local self = {}
+function Shape(x, y, size, color)
+    local self = {}
 
   	local x = x
 	local y = y
 	local color = color
+	local size = size
 	
 	function self.setColor(c)
 		color = c
@@ -11,6 +12,14 @@ function Shape(x, y, color)
 
 	function self.getColor()
 		return color
+	end
+
+	function self.setSize(s)
+		size = s
+	end
+
+	function self.getSize(s)
+		return size
 	end
 
 	return self
