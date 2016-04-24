@@ -6,7 +6,7 @@ require "Square" 			-- import base class
 
 local CLASS_NAME = "Player"
 local COUNT = 0				-- instances generated, used for ID
-local SIZE = 50				-- default size
+local SIZE = 25				-- default size
 local X = love.graphics.getWidth()/2	-- default X
 local Y = love.graphics.getHeight()/2	-- default Y
 local COLOR = black 			-- default color
@@ -43,8 +43,8 @@ function Player(world, x, y, size, color)
 	-- 		   PROPERTIES			--
 	--------------------------------------------------
 	local life = MAX_LIFE							-- set full life
-	local jumpForce = -200							-- force amount used to make the player jump
-	local moveForce = 600							-- force amount used to move the player
+	local jumpForce = -50							-- force amount used to make the player jump
+	local moveForce = 300							-- force amount used to move the player
 	local normalY = 0							-- total Y component of normal vector as sum of each contact
 	local normalX = 0							-- total X component of normal vector as sum of each contact
 	local body = self.setBody(world,"dynamic")
@@ -157,7 +157,7 @@ function Player(world, x, y, size, color)
 	-- Decrease player life points
 	-- p:	damage points(positive value)
 	function self.damage(p)
-		life = life - p			-- decrease life points
+		life = life - 20*p			-- decrease life points
 		if life < 0 then		-- ensure not exceed the limit
 			life = 0
 		end
@@ -182,6 +182,11 @@ function Player(world, x, y, size, color)
 	-- Return player contacts
 	function self.contacts ()
 		return contacts
+	end
+	
+	-- Checks if the player is still alive
+	function self.isAlive()
+		return life > 3
 	end
 
 	return self 						-- player instance
