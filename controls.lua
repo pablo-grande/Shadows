@@ -39,5 +39,7 @@ function love.keyreleased(key)
 		stage.changeColor()		-- change stage color
 	elseif key == "i" then
 		DEBUG = not DEBUG			-- (de)activate debugging
+	elseif key == "o" then		-- kill the player instantly
+		player.damage(player.life())
 	end
 end
