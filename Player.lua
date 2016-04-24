@@ -54,7 +54,6 @@ function Player(world, x, y, size, color)
 	fixture:setFriction(1)							-- set player's friction to 1 (max)
 	local shadows = {}							-- player's shadows
 	local contacts = {}							-- current contacts.Array where key=object_ID;value=normalY
-	local shape = self.getShape()
 
 	--------------------------------------------------
 	-- 		INSTANCE METHODS		--
@@ -63,7 +62,7 @@ function Player(world, x, y, size, color)
 	-- Draw the player and its shadows
 	function self.draw()
 		love.graphics.setColor(self.realColor())				-- set graphics with player color
-		love.graphics.polygon("fill", body:getWorldPoints(shape:getPoints()))	-- paint player
+		love.graphics.polygon("fill", body:getWorldPoints(self.getShape():getPoints()))	-- paint player
 		for k,sh in pairs(shadows) do						-- iterate through player shadows
 			sh.draw()							-- draw shadow
 		end
