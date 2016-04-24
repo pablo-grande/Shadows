@@ -11,7 +11,6 @@ local X = love.graphics.getWidth()/2	-- default X
 local Y = love.graphics.getHeight()/2	-- default Y
 local COLOR = black 			-- default color
 local MAX_LIFE = 100			-- max life points(lp), min is 0
-local DETERIORATION = 1			-- life deterioration rate (lp/dt). (static constant or instance propertie?)
 local SHADOW_LIFE_CONSUMPTION = 2	-- life points required to generate a shadow
 
 --------------------------------------------------
@@ -66,11 +65,6 @@ function Player(world, x, y, size, color)
 		for k,sh in pairs(shadows) do						-- iterate through player shadows
 			sh.draw()							-- draw shadow
 		end
-	end
-
-	-- Player update operations based on delta time
-	function self.update(dt)
-		self.damage(DETERIORATION*dt)						-- update player life based on time
 	end
 
 	-- Makes the player jump

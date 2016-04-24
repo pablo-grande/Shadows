@@ -19,7 +19,6 @@ end
 
 function love.update(dt)
 	world:update(dt) 	--this puts the world into motion
-	player.update(dt)
 	keyboardControls()
 end
 
